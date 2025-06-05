@@ -1,9 +1,12 @@
 import requests
+import logging
 from typing import Optional, Dict, List, Any
 from collections import defaultdict
 from sqlalchemy.orm import Session
 from app.db.models import Admin, User
 from config import MOREBOT_LICENSE, MOREBOT_SECRET
+
+logger = logging.getLogger("uvicorn.error")
 
 class Morebot:
     _base_url = f"https://{MOREBOT_LICENSE}.morebot.top:443/api/{MOREBOT_SECRET}"
@@ -50,6 +53,8 @@ class Morebot:
                 timeout=cls._timeout
             )
             response.raise_for_status()
+            logger.info("Admin usage report successfully.")
+            cls._failed_reports.clear()
         except requests.RequestException:
             cls._save_failed_report(report_data)
             return False
