@@ -2,6 +2,7 @@ from typing import Dict, List, Union
 
 from fastapi import APIRouter, Depends, HTTPException
 
+from morebot import Morebot
 from app import __version__, xray
 from app.db import Session, crud, get_db
 from app.models.admin import Admin
@@ -66,6 +67,8 @@ def get_system_stats(
 @router.get("/inbounds", response_model=Dict[ProxyTypes, List[ProxyInbound]])
 def get_inbounds(admin: Admin = Depends(Admin.get_current)):
     """Retrieve inbound configurations grouped by protocol."""
+    if not admin.is_sudo:
+        return Morebot.get_inbounds()
     return xray.config.inbounds_by_protocol
 
 
