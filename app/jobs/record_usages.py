@@ -9,6 +9,7 @@ from sqlalchemy import and_, bindparam, insert, select, update
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.dml import Insert
 
+from morebot import Morebot
 from app import scheduler, xray
 from app.db import GetDB
 from app.db.models import Admin, NodeUsage, NodeUserUsage, System, User
@@ -151,6 +152,7 @@ def record_user_usages():
 
     with GetDB() as db:
         user_admin_map = dict(db.query(User.id, User.admin_id).all())
+        Morebot.report_admin_usage(db, users_usage)
 
     admin_usage = defaultdict(int)
     for user_usage in users_usage:
